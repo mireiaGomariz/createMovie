@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({
 app.get('/api/movies', (req, res) => {
     connection.query("SELECT * from movie", (err, results) => {
         if (err) {
-            res.status(500).send("Error charging /api/movies");
+            res.status(500).send(err);
         } else {
             res.json(results);
         }
@@ -40,8 +40,36 @@ app.post('/api/movies', (req,res) => {
         res.sendStatus(200)
       }
     }
-  })
+  )
 })
+
+app.put('/api/movies/:id', (req, res) => {
+  const idMovie = req.params.id;
+  const formData = req.body;
+
+   connection.query('UPDATE movie SET ? WHERE id = ?', [formData, idMovie], err => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
+app.delete('/api/movies/:id', (req, res) => {
+
+  const idMovies = req.params.id;
+
+  connection.query('DELETE FROM movie WHERE id = ?', [idMovies], err => {
+    if (err) {
+       console.log(err);
+      res.status(500).send("Error deleting an employee");
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
 
 app.listen(port, (err) => {
   if (err) {
